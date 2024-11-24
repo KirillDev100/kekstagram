@@ -1,35 +1,33 @@
-const picturesContainer = document.querySelector('.pictures');
-const pictureTemplate = document.querySelector('#picture').content;
-const pictureLink = pictureTemplate.querySelector('.picture');
-const imagesFragment = document.createDocumentFragment();
+const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const createImage = (picture, onPictureClick) => {
-  const pictureLinkCloned = pictureLink.cloneNode(true);
-  const pictureImg = pictureLinkCloned.querySelector('.picture__img');
-  pictureImg.src = picture.url;
-  pictureImg.alt = picture.description;
-  const pictureInfo = pictureLinkCloned.querySelector('.picture__info');
-  pictureInfo.querySelector('.picture__likes').textContent = picture.likes;
-  pictureInfo.querySelector('.picture__comments').textContent = picture.comments.length;
-
-  pictureLinkCloned.addEventListener('click', () => {
-    onPictureClick(picture);
-  });
-
-  return pictureLinkCloned;
+const openSomeModal = (currentElement, onEscape) => {
+  currentElement.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+  document.addEventListener('keydown', onEscape);
 };
 
-const renderImages = (photosData, onPictureClick) => {
-  let image = picturesContainer.querySelector('.picture');
-  while (image) {
-    image.remove();
-    image = picturesContainer.querySelector('.picture');
+const closeSomeModal = (currentElement, onEscape) => {
+  currentElement.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+  document.removeEventListener('keydown', onEscape);
+};
+
+const sortArrayRandom = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-  photosData.forEach((picture) => {
-    const newImage = createImage(picture, onPictureClick);
-    imagesFragment.append(newImage);
-  });
-  picturesContainer.append(imagesFragment);
+  return array;
 };
 
-export { renderImages };
+
+const debounce = (cb, timeoutDelay = 500) => {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => cb.apply(this, rest), timeoutDelay);
+  };
+};
+
+export { isEscapeKey, openSomeModal, closeSomeModal, sortArrayRandom, debounce };
